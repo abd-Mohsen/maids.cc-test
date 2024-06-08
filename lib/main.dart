@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:maids.cc_test/providers/login_provider.dart';
 import 'package:maids.cc_test/providers/task_provider.dart';
+import 'package:maids.cc_test/providers/user_provider.dart';
 import 'package:maids.cc_test/themes.dart';
 import 'package:maids.cc_test/views/home_page.dart';
 import 'package:maids.cc_test/views/login_page.dart';
@@ -25,6 +27,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => TaskProvider()),
+        ChangeNotifierProvider(create: (context) => LoginProvider()),
+        ChangeNotifierProvider(create: (context) => UserProvider()),
       ],
       child: MaterialApp(
         title: 'maids.cc test',

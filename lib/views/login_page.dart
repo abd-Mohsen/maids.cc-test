@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,20 +19,32 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController email = TextEditingController();
+  TextEditingController userName = TextEditingController();
   TextEditingController password = TextEditingController();
+
   GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
+  bool buttonPressed = false;
 
   Future<void> login() async {
-    setLoading(true);
-    LoginModel? response = await RemoteServices.login(email.text, password.text);
-    if (response == null) {
-      print("errorrr");
-    } else {
-      print(response);
-      prefs.setString("token", response.token);
-      prefs.setString("refresh_token", response.refreshToken);
-      navigatorKey.currentState!.pushNamed("/home");
+    buttonPressed = true;
+    bool valid = loginFormKey.currentState!.validate();
+    if (!valid) return;
+    try {
+      setLoading(true);
+      LoginModel? response = await RemoteServices.login(userName.text, password.text).timeout(Duration(seconds: 15));
+      if (response == null) {
+        print("errorrr");
+      } else {
+        print(response);
+        prefs.setString("token", response.token);
+        prefs.setString("refresh_token", response.refreshToken);
+        navigatorKey.currentState!.pushNamed("/home"); //todo: pop previous
+      }
+    } on TimeoutException {
+      // show timeout popup
+      print("timed out");
+    } catch (e) {
+      print(e.toString());
     }
     setLoading(false);
   }
@@ -77,6 +91,7 @@ class _LoginPageState extends State<LoginPage> {
       },
       child: SafeArea(
         child: Scaffold(
+          backgroundColor: cs.background,
           body: SingleChildScrollView(
             child: Form(
               key: loginFormKey,
@@ -102,20 +117,20 @@ class _LoginPageState extends State<LoginPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16),
                     child: Text(
-                      "enter your credintials",
+                      "enter your credentials:",
                       style: tt.headlineSmall!.copyWith(color: cs.onBackground),
                     ),
                   ),
                   AuthField(
-                    label: "email",
-                    controller: email,
+                    label: "user name",
+                    controller: userName,
                     keyboardType: TextInputType.emailAddress,
-                    prefixIcon: Icon(Icons.email_outlined),
+                    prefixIcon: Icon(Icons.person_outline),
                     validator: (val) {
-                      return validateInput(email.text, 4, 50, "email");
+                      return validateInput(userName.text, 4, 50, "user name");
                     },
                     onChanged: (val) {
-                      loginFormKey.currentState!.validate();
+                      if (buttonPressed) loginFormKey.currentState!.validate();
                     },
                   ),
                   const SizedBox(height: 8),
@@ -136,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                         return validateInput(password.text, 4, 50, "password");
                       },
                       onChanged: (val) {
-                        loginFormKey.currentState!.validate();
+                        if (buttonPressed) loginFormKey.currentState!.validate();
                       },
                     ),
                   ),
@@ -146,16 +161,16 @@ class _LoginPageState extends State<LoginPage> {
                         padding: const EdgeInsets.all(12),
                         margin: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.blueAccent,
+                          color: cs.primary,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: loading
-                            ? CircularProgressIndicator()
+                            ? CircularProgressIndicator(color: cs.onPrimary)
                             : Padding(
                                 padding: const EdgeInsets.all(4),
                                 child: Text(
                                   "login",
-                                  style: tt.titleMedium!.copyWith(color: cs.onPrimary),
+                                  style: tt.titleLarge!.copyWith(color: cs.onPrimary),
                                 ),
                               ),
                       ),
