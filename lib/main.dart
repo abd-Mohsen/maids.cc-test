@@ -1,8 +1,9 @@
-import 'package:bloc/providers/task_provider.dart';
-import 'package:bloc/views/home_page.dart';
-import 'package:bloc/views/login_page.dart';
-import 'package:bloc/views/redirect_page.dart';
 import 'package:flutter/material.dart';
+import 'package:maids.cc_test/providers/task_provider.dart';
+import 'package:maids.cc_test/themes.dart';
+import 'package:maids.cc_test/views/home_page.dart';
+import 'package:maids.cc_test/views/login_page.dart';
+import 'package:maids.cc_test/views/redirect_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 
@@ -10,6 +11,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 late SharedPreferences prefs;
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   prefs = await SharedPreferences.getInstance();
   runApp(const MyApp());
 }
@@ -26,9 +28,8 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'maids.cc test',
-        //home: LoginPage(),
         themeMode: ThemeMode.dark,
-        theme: ThemeData.dark(),
+        theme: MyThemes.myDarkMode,
         navigatorKey: navigatorKey,
         initialRoute: '/',
         routes: {

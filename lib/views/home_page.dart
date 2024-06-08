@@ -1,11 +1,22 @@
-import 'package:bloc/providers/task_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart';
+import '../providers/task_provider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    Provider.of<TaskProvider>(context).getTasks();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +43,8 @@ class HomePage extends StatelessWidget {
               var task = taskProvider.tasks[i];
               return ListTile(
                 title: Text(task.todo),
-                subtitle: Text(task.),
-                leading: Image.asset("assets/images/flutter.png"),
+                //subtitle: Text(task.a),
+                leading: Icon(Icons.task_alt),
               );
             });
       }),
