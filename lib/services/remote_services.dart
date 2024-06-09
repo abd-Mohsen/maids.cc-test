@@ -7,8 +7,6 @@ import '../main.dart';
 import '../models/login_model.dart';
 import '../models/task_model.dart';
 
-typedef CallerFunctionType<T> = R Function<T, R>(T);
-
 class RemoteServices {
   static var client = http.Client();
   //static String hostIP = "https://dummyjson.com";
@@ -27,6 +25,7 @@ class RemoteServices {
         {
           "username": name,
           "password": password,
+          "expiresInMins": 1,
         },
       ),
       headers: headers,
@@ -48,8 +47,9 @@ class RemoteServices {
       List tasks = jsonDecode(response.body)["todos"];
       return taskModelFromJson(jsonEncode(tasks));
     }
-    print("failed ${response.statusCode}");
-    handleRefreshToken(response.statusCode, fetchTasks, [limit, skip]);
+    if (await handleRefreshToken(response.statusCode)) {
+      return fetchTasks();
+    }
     return null;
   }
 
@@ -62,20 +62,20 @@ class RemoteServices {
       return UserModel.fromJson(jsonDecode(response.body));
     }
     print(response.body);
-    print("failed ${response.statusCode}");
-    handleRefreshToken(response.statusCode, fetchAuthUser, []);
+    if (await handleRefreshToken(response.statusCode)) {
+      return fetchAuthUser();
+    }
     return null;
   }
 
-  static Future<void> handleRefreshToken(int statusCode, Function caller, List params) async {
-    // todo: refreshing works fine, but not sure if the caller get called, test further
-    if (statusCode != 401) return;
+  static Future<bool> handleRefreshToken(int statusCode) async {
+    if (statusCode != 401) return false;
     var response = await http.post(
       Uri.parse("$kHostIP/auth/refresh"),
       body: jsonEncode(
         {
           "refreshToken": refreshToken,
-          "expiresInMins": 60,
+          "expiresInMins": 1,
         },
       ),
       headers: headers,
@@ -84,10 +84,9 @@ class RemoteServices {
       Map result = jsonDecode(response.body);
       prefs.setString("token", result["token"]);
       prefs.setString("refresh_token", result["refreshToken"]);
+      print("refreshed token");
+      return true;
     }
-    Function.apply(caller, params);
-    // save new tokens
+    return false;
   }
-
-  //todo: make a method that handles refresh token, takes status code, refresh tokens and recalls the caller function
 }

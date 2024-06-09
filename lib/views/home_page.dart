@@ -22,6 +22,12 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void logout() {
+    prefs.remove("token");
+    prefs.remove("refreshToken");
+    navigatorKey.currentState!.pushNamedAndRemoveUntil("/login", (route) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
     TextTheme tt = Theme.of(context).textTheme;
@@ -63,7 +69,7 @@ class _HomePageState extends State<HomePage> {
                   "logout",
                   style: tt.titleLarge,
                 ),
-                onTap: () => navigatorKey.currentState!.pushNamedAndRemoveUntil("/login", (route) => false),
+                onTap: () => logout(),
                 //todo: delete tokens when logging put
               )
             ],

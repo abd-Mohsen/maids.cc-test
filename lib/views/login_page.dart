@@ -35,11 +35,11 @@ class _LoginPageState extends State<LoginPage> {
       LoginModel? response = await RemoteServices.login(userName.text, password.text).timeout(kTimeOutDuration1);
       if (response == null) {
         print("error, check your credentials and try again");
-        return;
+      } else {
+        prefs.setString("token", response.token);
+        prefs.setString("refresh_token", response.refreshToken);
+        navigatorKey.currentState!.pushNamedAndRemoveUntil("/home", (route) => false);
       }
-      prefs.setString("token", response.token);
-      prefs.setString("refresh_token", response.refreshToken);
-      navigatorKey.currentState!.pushNamedAndRemoveUntil("/home", (route) => false);
     } on TimeoutException {
       print("timed out"); // dialog
     } catch (e) {

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:maids.cc_test/constants.dart';
 
 import '../models/task_model.dart';
 import '../services/remote_services.dart';
@@ -19,7 +20,7 @@ class TaskProvider extends ChangeNotifier {
     //todo: pagination
     toggleLoading(true);
     try {
-      List<TaskModel>? result = await RemoteServices.fetchTasks().timeout(const Duration(seconds: 15));
+      List<TaskModel>? result = await RemoteServices.fetchTasks().timeout(kTimeOutDuration1);
       if (result == null) {
         print("error getting tasks, check your connection"); //todo: show dialog
       }
