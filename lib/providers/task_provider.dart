@@ -16,6 +16,8 @@ class TaskProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  //todo: refresh indicator + refresh task request
+
   Future<void> getTasks() async {
     //todo: pagination
     toggleLoading(true);

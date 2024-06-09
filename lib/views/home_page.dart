@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:maids.cc_test/models/task_model.dart';
 import 'package:maids.cc_test/providers/user_provider.dart';
+import 'package:maids.cc_test/views/widgets/add_task_bottom_sheet.dart';
+import 'package:maids.cc_test/views/widgets/task_card.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart';
@@ -60,6 +63,33 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
               ),
+              //todo: make light mode if there is time
+              ListTile(
+                leading: const Icon(
+                  Icons.info_outline,
+                ),
+                title: Text(
+                  "about app",
+                  style: tt.titleLarge,
+                ),
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text("Flutter developer test"),
+                    content: const Text("test project that demonstrates proficiency in Flutter development. The test "
+                        "project will focus on various aspects, including clean code & architecture, "
+                        "state management patterns, performance optimization, handling local storage, "
+                        "and writing unit tests\n\ntest is offered by: maids.cc company\n\n"
+                        "developed by: Abdulrahman Mohsen."),
+                    actions: [
+                      TextButton(
+                        onPressed: () => navigatorKey.currentState!.pop(),
+                        child: Text("ok"),
+                      )
+                    ],
+                  ),
+                ),
+              ),
               ListTile(
                 leading: const Icon(
                   Icons.logout,
@@ -70,10 +100,18 @@ class _HomePageState extends State<HomePage> {
                   style: tt.titleLarge,
                 ),
                 onTap: () => logout(),
-                //todo: delete tokens when logging put
-              )
+              ),
             ],
           ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              builder: (context) => AddTaskBottomSheet(),
+            );
+          },
         ),
         body: Consumer<TaskProvider>(builder: (_, taskProvider, child) {
           return taskProvider.isLoading
@@ -81,13 +119,10 @@ class _HomePageState extends State<HomePage> {
               : ListView.builder(
                   itemCount: taskProvider.tasks.length,
                   itemBuilder: (context, i) {
-                    var task = taskProvider.tasks[i];
-                    return ListTile(
-                      title: Text(task.todo),
-                      //subtitle: Text(task.a),
-                      leading: Icon(Icons.task_alt),
-                    );
-                  });
+                    TaskModel task = taskProvider.tasks[i];
+                    return TaskCard(task: task);
+                  },
+                );
         }),
       ),
     );

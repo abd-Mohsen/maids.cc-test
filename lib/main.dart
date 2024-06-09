@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maids.cc_test/models/task_model.dart';
 import 'package:maids.cc_test/providers/login_provider.dart';
 import 'package:maids.cc_test/providers/task_provider.dart';
 import 'package:maids.cc_test/providers/user_provider.dart';
@@ -6,6 +7,7 @@ import 'package:maids.cc_test/themes.dart';
 import 'package:maids.cc_test/views/home_page.dart';
 import 'package:maids.cc_test/views/login_page.dart';
 import 'package:maids.cc_test/views/redirect_page.dart';
+import 'package:maids.cc_test/views/task_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 
@@ -41,6 +43,10 @@ class MyApp extends StatelessWidget {
           '/': (context) => const RedirectPage(),
           '/home': (context) => const HomePage(),
           '/login': (context) => const LoginPage(),
+          '/task': (context) {
+            final task = ModalRoute.of(context)?.settings.arguments as TaskModel;
+            return TaskPage(task: task);
+          },
         },
       ),
     );

@@ -89,4 +89,25 @@ class RemoteServices {
     }
     return false;
   }
+
+  static Future<TaskModel?> addTask(String todo, bool completed, int userId) async {
+    var response = await http.post(
+      Uri.parse("$kHostIP/todos/add"),
+      body: jsonEncode(
+        {
+          "todo": todo,
+          "completed": completed,
+          "userId": userId,
+        },
+      ),
+      headers: headers,
+    );
+    print(response.body);
+    var res = jsonDecode(response.body);
+    if (response.statusCode == 201) {
+      print("success");
+      return TaskModel.fromJson(res);
+    }
+    return null;
+  }
 }
