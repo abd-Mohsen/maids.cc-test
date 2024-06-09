@@ -4,26 +4,26 @@ import 'package:flutter/material.dart';
 import 'package:maids.cc_test/constants.dart';
 import 'package:maids.cc_test/main.dart';
 import 'package:maids.cc_test/providers/task_provider.dart';
-import 'package:maids.cc_test/providers/user_provider.dart';
 import 'package:maids.cc_test/services/remote_services.dart';
-import 'package:maids.cc_test/views/widgets/auth_field.dart';
 import 'package:maids.cc_test/views/widgets/task_card.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/task_model.dart';
 
-class AddTaskBottomSheet extends StatefulWidget {
-  const AddTaskBottomSheet({super.key});
+class UpdateTaskBottomSheet extends StatefulWidget {
+  final TaskModel task;
+  const UpdateTaskBottomSheet({super.key, required this.task});
 
   @override
-  State<AddTaskBottomSheet> createState() => _AddTaskBottomSheetState();
+  State<UpdateTaskBottomSheet> createState() => _UpdateTaskBottomSheetState();
 }
 
-class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
-  TextEditingController todo = TextEditingController();
-
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  bool buttonPressed = false;
+class _UpdateTaskBottomSheetState extends State<UpdateTaskBottomSheet> {
+  @override
+  void initState() {
+    completed = widget.task.completed;
+    super.initState();
+  }
 
   bool completed = false;
   void setCompleted() {
@@ -40,26 +40,30 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
     });
   }
 
-  Future<void> addTask() async {
-    bool valid = formKey.currentState!.validate();
-    buttonPressed = true;
-    if (!valid) return;
+  Future<void> updateTask() async {
     try {
       toggleLoading(true);
-      TaskModel? newTask = await RemoteServices.addTask(
-        todo.text,
-        completed,
-        Provider.of<UserProvider>(context, listen: false).currentUser!.id,
-      ).timeout(kTimeOutDuration1);
-      if (newTask == null) {
-        print("error adding task, check your connection"); //todo: show dialog
+      TaskModel? updatedTask;
+      if (widget.task.id == 255) {
+        widget.task.completed == completed;
+        updatedTask = widget.task;
       } else {
-        Provider.of<TaskProvider>(navigatorKey.currentContext!, listen: false).addTask(newTask);
+        updatedTask = await RemoteServices.updateTask(
+          widget.task.id,
+          completed,
+        ).timeout(kTimeOutDuration1);
+      }
+      if (updatedTask == null) {
+        print("error updating task, check your connection"); //todo: show dialog
+      } else {
+        Provider.of<TaskProvider>(navigatorKey.currentContext!, listen: false).updateTask(widget.task, completed);
+        navigatorKey.currentState!.pop();
+        navigatorKey.currentState!.pop();
         showDialog(
           context: navigatorKey.currentContext!,
           builder: (context) => AlertDialog(
-            title: const Text("added successfully"),
-            content: TaskCard(task: newTask),
+            title: const Text("updated successfully"),
+            content: TaskCard(task: updatedTask!),
             actions: [
               TextButton(
                 onPressed: () => navigatorKey.currentState!.pop(),
@@ -82,31 +86,19 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   Widget build(BuildContext context) {
     TextTheme tt = Theme.of(context).textTheme;
     ColorScheme cs = Theme.of(context).colorScheme;
-    return BottomSheet(
-      showDragHandle: true,
-      enableDrag: true,
-      onClosing: () {},
-      builder: (context) => Form(
-        key: formKey,
-        child: Column(
+    return SizedBox(
+      height: 300,
+      child: BottomSheet(
+        showDragHandle: true,
+        enableDrag: true,
+        onClosing: () {},
+        builder: (context) => Column(
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Text(
-                "Add a Task",
+                "Update a Task",
                 style: tt.headlineLarge!.copyWith(color: cs.primary),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: AuthField(
-                controller: todo,
-                label: 'todo',
-                prefixIcon: Icon(Icons.menu_outlined),
-                validator: (val) => validateInput(val!, 4, 500, ""),
-                onChanged: (val) {
-                  if (buttonPressed) formKey.currentState!.validate();
-                },
               ),
             ),
             Padding(
@@ -120,7 +112,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: GestureDetector(
-                onTap: isLoading ? null : () => addTask(),
+                onTap: isLoading ? null : () => updateTask(),
                 child: Container(
                   decoration: BoxDecoration(
                     color: cs.primary,
@@ -131,7 +123,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                     child: isLoading
                         ? CircularProgressIndicator(color: cs.onPrimary)
                         : Text(
-                            "Add",
+                            "Update",
                             style: tt.headlineMedium!.copyWith(color: cs.onPrimary),
                           ),
                   ),

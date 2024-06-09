@@ -110,4 +110,35 @@ class RemoteServices {
     }
     return null;
   }
+
+  static Future<TaskModel?> updateTask(int id, bool completed) async {
+    var response = await http.patch(
+      Uri.parse("$kHostIP/todos/$id"),
+      body: jsonEncode(
+        {
+          "completed": completed,
+        },
+      ),
+      headers: headers,
+    );
+    print(response.body);
+    var res = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      print("success");
+      return TaskModel.fromJson(res);
+    }
+    return null;
+  }
+
+  static Future<bool> deleteTask(int id) async {
+    var response = await http.delete(
+      Uri.parse("$kHostIP/todos/$id"),
+      headers: headers,
+    );
+    if (response.statusCode == 200) {
+      print("success");
+      return true;
+    }
+    return false;
+  }
 }

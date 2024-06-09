@@ -8,7 +8,7 @@ String taskModelToJson(List<TaskModel> data) => json.encode(List<dynamic>.from(d
 class TaskModel {
   final int id;
   final String todo;
-  final bool completed;
+  bool completed;
   final int userId;
 
   TaskModel({

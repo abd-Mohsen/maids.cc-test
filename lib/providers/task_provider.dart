@@ -16,6 +16,21 @@ class TaskProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addTask(TaskModel task) {
+    tasks.add(task);
+    notifyListeners();
+  }
+
+  void updateTask(TaskModel task, bool val) {
+    task.completed = val;
+    notifyListeners();
+  }
+
+  void deleteTask(TaskModel task) {
+    tasks.remove(task);
+    notifyListeners();
+  }
+
   //todo: refresh indicator + refresh task request
 
   Future<void> getTasks() async {

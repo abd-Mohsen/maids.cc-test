@@ -5,6 +5,7 @@ const String kHostIP = "https://dummyjson.com";
 const String kFontFamily = "Barlow";
 
 Duration kTimeOutDuration1 = const Duration(seconds: 15);
+Duration kTimeOutDuration2 = const Duration(seconds: 20);
 
 TextTheme kMyTextTheme = const TextTheme(
   displayLarge: TextStyle(
