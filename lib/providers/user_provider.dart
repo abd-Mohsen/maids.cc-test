@@ -4,17 +4,24 @@ import '../models/user_model.dart';
 import '../services/remote_services.dart';
 
 class UserProvider extends ChangeNotifier {
-  late UserModel currentUser;
+  UserModel? currentUser;
 
-  //todo: add loading
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+  void toggleLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
   Future<void> getAuthUser() async {
-    //todo: pagination
+    //todo: put a timeout here
+    toggleLoading(true);
     UserModel? result = await RemoteServices.fetchAuthUser();
     if (result == null) {
       print("errorrrr"); //todo: show dialog
       return;
     }
     currentUser = result;
-    notifyListeners();
+    toggleLoading(false);
   }
 }

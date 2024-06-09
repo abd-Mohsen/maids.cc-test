@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 const String kHostIP = "https://dummyjson.com";
 
-String kFontFamily = "Barlow";
+const String kFontFamily = "Barlow";
 
-TextTheme kMyTextTheme = TextTheme(
+Duration kTimeOutDuration1 = const Duration(seconds: 15);
+
+TextTheme kMyTextTheme = const TextTheme(
   displayLarge: TextStyle(
     fontSize: 57,
     //wordSpacing: 64,

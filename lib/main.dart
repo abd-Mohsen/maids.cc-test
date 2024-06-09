@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
         title: 'maids.cc test',
         themeMode: ThemeMode.dark,
         theme: MyThemes.myDarkMode,
+        debugShowCheckedModeBanner: false,
         navigatorKey: navigatorKey,
         initialRoute: '/',
         routes: {

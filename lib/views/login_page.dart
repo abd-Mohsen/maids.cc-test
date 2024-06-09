@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:maids.cc_test/constants.dart';
 import 'package:maids.cc_test/views/widgets/auth_field.dart';
 import 'package:provider/provider.dart';
 
@@ -31,18 +32,16 @@ class _LoginPageState extends State<LoginPage> {
     if (!valid) return;
     try {
       setLoading(true);
-      LoginModel? response = await RemoteServices.login(userName.text, password.text).timeout(Duration(seconds: 15));
+      LoginModel? response = await RemoteServices.login(userName.text, password.text).timeout(kTimeOutDuration1);
       if (response == null) {
-        print("errorrr");
-      } else {
-        print(response);
-        prefs.setString("token", response.token);
-        prefs.setString("refresh_token", response.refreshToken);
-        navigatorKey.currentState!.pushNamed("/home"); //todo: pop previous
+        print("error, check your credentials and try again");
+        return;
       }
+      prefs.setString("token", response.token);
+      prefs.setString("refresh_token", response.refreshToken);
+      navigatorKey.currentState!.pushNamedAndRemoveUntil("/home", (route) => false);
     } on TimeoutException {
-      // show timeout popup
-      print("timed out");
+      print("timed out"); // dialog
     } catch (e) {
       print(e.toString());
     }
@@ -127,7 +126,7 @@ class _LoginPageState extends State<LoginPage> {
                     keyboardType: TextInputType.emailAddress,
                     prefixIcon: Icon(Icons.person_outline),
                     validator: (val) {
-                      return validateInput(userName.text, 4, 50, "user name");
+                      return validateInput(userName.text, 1, 500, "user name");
                     },
                     onChanged: (val) {
                       if (buttonPressed) loginFormKey.currentState!.validate();
@@ -148,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: Icon(loginProvider.passwordVisible ? CupertinoIcons.eye_slash : CupertinoIcons.eye),
                       ),
                       validator: (val) {
-                        return validateInput(password.text, 4, 50, "password");
+                        return validateInput(password.text, 1, 500, "password");
                       },
                       onChanged: (val) {
                         if (buttonPressed) loginFormKey.currentState!.validate();

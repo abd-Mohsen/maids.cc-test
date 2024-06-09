@@ -75,7 +75,7 @@ class RemoteServices {
       body: jsonEncode(
         {
           "refreshToken": refreshToken,
-          "expiresInMins": 90,
+          "expiresInMins": 60,
         },
       ),
       headers: headers,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import '../models/task_model.dart';
@@ -6,14 +8,27 @@ import '../services/remote_services.dart';
 class TaskProvider extends ChangeNotifier {
   List<TaskModel> tasks = [];
 
-  //todo: add loading
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+  void toggleLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
   Future<void> getTasks() async {
     //todo: pagination
-    List<TaskModel>? result = await RemoteServices.fetchTasks();
-    if (result == null) {
-      print("errorrrr"); //todo: show dialog
+    toggleLoading(true);
+    try {
+      List<TaskModel>? result = await RemoteServices.fetchTasks().timeout(const Duration(seconds: 15));
+      if (result == null) {
+        print("error getting tasks, check your connection"); //todo: show dialog
+      }
+      tasks.addAll(result ?? []);
+    } on TimeoutException {
+      print("request timed out, check your connection"); //todo: show dialog
+    } catch (e) {
+      //
     }
-    tasks.addAll(result ?? []);
-    notifyListeners();
+    toggleLoading(false);
   }
 }

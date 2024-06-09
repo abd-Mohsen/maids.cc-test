@@ -49,13 +49,13 @@ class AuthField extends StatelessWidget {
 
 String? validateInput(String val, int min, int max, String type,
     {String pass = "", String rePass = "", bool canBeEmpty = false}) {
-  if (val.trim().isEmpty && !canBeEmpty) return "لا يمكن أن يكون فارغ";
+  if (val.trim().isEmpty && !canBeEmpty) return "cannot be empty";
 
-  if (val.length < min) return "الطول لا يمكن ان يكون أقصر من $min";
+  if (val.length < min) return "must be greater than $min characters";
 
-  if (val.length > max) return "الطول لا يمكن ان يكون أكبر من $max";
+  if (val.length > max) return "must be less than $max characters";
 
-  if (pass != rePass) return "كلمتا المرور غير متطابقتان";
+  if (pass != rePass) return "passwords don't match";
 
   return null;
 }
