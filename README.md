@@ -11,6 +11,7 @@ Welcome to the Maids.cc Test App! This Android mobile application is a demonstra
 6. [Technical Details](#technical-details)
 7. [Best Practices Followed](#best-practices-followed)
 8. [Unit Testing](#unit-testing)
+9. [live demo](demo.mp4)
 
 ## Features
 
@@ -64,7 +65,8 @@ Welcome to the Maids.cc Test App! This Android mobile application is a demonstra
 The app follows a basic design commonly seen in to-do applications, focusing on simplicity and usability:
 
 - **User Interface**: A clean and straightforward UI design that allows users to focus on task management without distractions.
-- **Navigation**: Simple navigation structure with a home screen for tasks and a login screen.
+- **Navigation**: Simple navigation structure with a home screen for tasks, a login screen, a page to view each task and a drawer to view user 
+  info, see information about the app, open a page to manage stored tasks and a button to logout.
 - **State Management**: Provider is used for efficient state management, ensuring that the app remains responsive and performs well.
 
 ## Challenges Faced
