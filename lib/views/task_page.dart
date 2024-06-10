@@ -35,7 +35,10 @@ class _TaskPageState extends State<TaskPage> {
           widget.task.id,
         ).timeout(kTimeOutDuration2);
         if (!deleted) {
-          print("error deleting task, check your connection"); //todo: show dialog
+          showDialog(
+            context: navigatorKey.currentContext!,
+            builder: (context) => kCheckConnectionDialog,
+          );
           throw Exception("connection error");
         }
       }
@@ -49,13 +52,16 @@ class _TaskPageState extends State<TaskPage> {
           actions: [
             TextButton(
               onPressed: () => navigatorKey.currentState!.pop(),
-              child: Text("ok"),
+              child: const Text("ok"),
             )
           ],
         ),
       );
     } on TimeoutException {
-      print("request timed out, check your connection"); //todo: show dialog
+      showDialog(
+        context: navigatorKey.currentContext!,
+        builder: (context) => kTimeoutDialog,
+      );
     } catch (e) {
       print(e.toString());
     } finally {
@@ -80,7 +86,7 @@ class _TaskPageState extends State<TaskPage> {
       body: ListView(
         children: [
           ListTile(
-            leading: Icon(Icons.menu_outlined),
+            leading: const Icon(Icons.menu_outlined),
             title: Text(
               "todo",
               style: tt.titleLarge,
@@ -91,7 +97,7 @@ class _TaskPageState extends State<TaskPage> {
             ),
           ),
           ListTile(
-            leading: Icon(Icons.task_alt),
+            leading: const Icon(Icons.task_alt),
             title: Text(
               "completed",
               style: tt.titleLarge,
@@ -102,7 +108,7 @@ class _TaskPageState extends State<TaskPage> {
             ),
           ),
           ListTile(
-            leading: Icon(Icons.person_2_outlined),
+            leading: const Icon(Icons.person_2_outlined),
             title: Text(
               "owner id",
               style: tt.titleLarge,
@@ -143,11 +149,11 @@ class _TaskPageState extends State<TaskPage> {
                     actions: [
                       TextButton(
                         onPressed: () => deleteTask(),
-                        child: Text("yes"),
+                        child: const Text("yes"),
                       ),
                       TextButton(
                         onPressed: () => navigatorKey.currentState!.pop(),
-                        child: Text("no"),
+                        child: const Text("no"),
                       ),
                     ],
                   ),

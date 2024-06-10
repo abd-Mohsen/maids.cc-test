@@ -99,3 +99,18 @@ TextTheme kMyTextTheme = const TextTheme(
     fontFamily: kFontFamily,
   ),
 );
+
+AlertDialog kCheckConnectionDialog = const AlertDialog(
+  title: Text("no connection"),
+  content: Text("please check your internet or try again later"),
+);
+
+AlertDialog kTimeoutDialog = const AlertDialog(
+  title: Text("request timed out"),
+  content: Text("please check your internet or try again later"),
+);
+
+AlertDialog kLoginFailedDialog = const AlertDialog(
+  title: Text("log in failed"),
+  content: Text("please check your credentials and try again"),
+);

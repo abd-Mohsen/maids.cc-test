@@ -45,6 +45,7 @@ class _UpdateTaskBottomSheetState extends State<UpdateTaskBottomSheet> {
       toggleLoading(true);
       TaskModel? updatedTask;
       if (widget.task.id == 255) {
+        //because i cant edit a task unless it is in the server (fake api)
         widget.task.completed == completed;
         updatedTask = widget.task;
       } else {
@@ -54,7 +55,10 @@ class _UpdateTaskBottomSheetState extends State<UpdateTaskBottomSheet> {
         ).timeout(kTimeOutDuration1);
       }
       if (updatedTask == null) {
-        print("error updating task, check your connection"); //todo: show dialog
+        showDialog(
+          context: navigatorKey.currentContext!,
+          builder: (context) => kCheckConnectionDialog,
+        );
       } else {
         Provider.of<TaskProvider>(navigatorKey.currentContext!, listen: false).updateTask(widget.task, completed);
         navigatorKey.currentState!.pop();
@@ -67,14 +71,17 @@ class _UpdateTaskBottomSheetState extends State<UpdateTaskBottomSheet> {
             actions: [
               TextButton(
                 onPressed: () => navigatorKey.currentState!.pop(),
-                child: Text("ok"),
+                child: const Text("ok"),
               )
             ],
           ),
         );
       }
     } on TimeoutException {
-      print("request timed out, check your connection"); //todo: show dialog
+      showDialog(
+        context: navigatorKey.currentContext!,
+        builder: (context) => kTimeoutDialog,
+      );
     } catch (e) {
       print(e.toString());
     } finally {
@@ -106,7 +113,7 @@ class _UpdateTaskBottomSheetState extends State<UpdateTaskBottomSheet> {
               child: CheckboxListTile(
                 value: completed,
                 onChanged: (val) => setCompleted(),
-                title: Text("completed"),
+                title: const Text("completed"),
               ),
             ),
             Padding(

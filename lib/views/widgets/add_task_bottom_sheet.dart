@@ -49,10 +49,13 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
       TaskModel? newTask = await RemoteServices.addTask(
         todo.text,
         completed,
-        Provider.of<UserProvider>(context, listen: false).currentUser!.id,
+        Provider.of<UserProvider>(context, listen: false).currentUser?.id ?? 1,
       ).timeout(kTimeOutDuration1);
       if (newTask == null) {
-        print("error adding task, check your connection"); //todo: show dialog
+        showDialog(
+          context: navigatorKey.currentContext!,
+          builder: (context) => kCheckConnectionDialog,
+        );
       } else {
         Provider.of<TaskProvider>(navigatorKey.currentContext!, listen: false).addTask(newTask);
         showDialog(
@@ -63,14 +66,17 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
             actions: [
               TextButton(
                 onPressed: () => navigatorKey.currentState!.pop(),
-                child: Text("ok"),
+                child: const Text("ok"),
               )
             ],
           ),
         );
       }
     } on TimeoutException {
-      print("request timed out, check your connection"); //todo: show dialog
+      showDialog(
+        context: navigatorKey.currentContext!,
+        builder: (context) => kTimeoutDialog,
+      );
     } catch (e) {
       print(e.toString());
     } finally {
@@ -102,7 +108,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
               child: AuthField(
                 controller: todo,
                 label: 'todo',
-                prefixIcon: Icon(Icons.menu_outlined),
+                prefixIcon: const Icon(Icons.menu_outlined),
                 validator: (val) => validateInput(val!, 4, 500, ""),
                 onChanged: (val) {
                   if (buttonPressed) formKey.currentState!.validate();
@@ -114,7 +120,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
               child: CheckboxListTile(
                 value: completed,
                 onChanged: (val) => setCompleted(),
-                title: Text("completed"),
+                title: const Text("completed"),
               ),
             ),
             Padding(

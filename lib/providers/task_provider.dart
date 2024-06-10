@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:maids.cc_test/constants.dart';
+import 'package:maids.cc_test/main.dart';
 import '../models/task_model.dart';
 import '../services/remote_services.dart';
 
@@ -29,8 +30,6 @@ class TaskProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  //todo: refresh indicator + refresh task request
-
   int page = 0, limit = 10;
   bool hasMore = true;
 
@@ -49,17 +48,24 @@ class TaskProvider extends ChangeNotifier {
         skip: limit * page,
       ).timeout(kTimeOutDuration1);
       if (result == null) {
-        print("error getting tasks, check your connection"); //todo: show dialog
+        showDialog(
+          context: navigatorKey.currentContext!,
+          builder: (context) => kCheckConnectionDialog,
+        );
       } else {
         if (result.length < 10) hasMore = false;
         tasks.addAll(result);
       }
     } on TimeoutException {
-      print("request timed out, check your connection"); //todo: show dialog
+      showDialog(
+        context: navigatorKey.currentContext!,
+        builder: (context) => kTimeoutDialog,
+      );
     } catch (e) {
       //
+    } finally {
+      toggleLoading(false);
     }
-    toggleLoading(false);
     page++;
   }
 }

@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage> {
                         )
                       : UserAccountsDrawerHeader(
                           accountName: Text(userProvider.currentUser?.firstName ?? ""),
-                          accountEmail: Text(userProvider.currentUser?.email ?? ""),
+                          accountEmail: Text(userProvider.currentUser?.email ?? "no internet"),
                           currentAccountPicture: CircleAvatar(
                             child: userProvider.currentUser == null
                                 ? null
@@ -141,7 +141,7 @@ class _HomePageState extends State<HomePage> {
                       return Center(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 24),
-                          child: taskProvider.hasMore
+                          child: taskProvider.hasMore && taskProvider.tasks.isNotEmpty
                               ? CircularProgressIndicator(color: cs.primary)
                               : CircleAvatar(
                                   radius: 5,

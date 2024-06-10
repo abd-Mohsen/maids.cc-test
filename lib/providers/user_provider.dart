@@ -1,5 +1,7 @@
-import 'package:flutter/foundation.dart';
-
+import 'dart:async';
+import 'package:flutter/material.dart';
+import '../constants.dart';
+import '../main.dart';
 import '../models/user_model.dart';
 import '../services/remote_services.dart';
 
@@ -14,14 +16,25 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future<void> getAuthUser() async {
-    //todo: put a timeout here
-    toggleLoading(true);
-    UserModel? result = await RemoteServices.fetchAuthUser();
-    if (result == null) {
-      print("errorrrr"); //todo: show dialog
-      return;
+    try {
+      toggleLoading(true);
+      UserModel? result = await RemoteServices.fetchAuthUser().timeout(kTimeOutDuration1);
+      if (result == null) {
+        showDialog(
+          context: navigatorKey.currentContext!,
+          builder: (context) => kCheckConnectionDialog,
+        );
+      }
+      currentUser = result;
+    } on TimeoutException {
+      // showDialog(
+      //   context: navigatorKey.currentContext!,
+      //   builder: (context) => kTimeoutDialog,
+      // );
+    } catch (e) {
+      //
+    } finally {
+      toggleLoading(false);
     }
-    currentUser = result;
-    toggleLoading(false);
   }
 }

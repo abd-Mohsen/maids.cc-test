@@ -16,7 +16,6 @@ class RemoteServices {
   };
   static String get token => prefs.getString("token") ?? "";
   static String get refreshToken => prefs.getString("refresh_token") ?? "";
-  //todo: handle refresh_token
 
   static Future<LoginModel?> login(String name, String password) async {
     var response = await http.post(
@@ -30,17 +29,12 @@ class RemoteServices {
       ),
       headers: headers,
     );
-    print(response.body);
-    var res = jsonDecode(response.body);
     if (response.statusCode == 200) {
       return loginModelFromJson(response.body);
     }
-    print(res);
-    print(res['Message']);
     return null;
   }
 
-  //todo: do a unit test, expect a list of tasks
   static Future<List<TaskModel>?> fetchTasks({int limit = 10, int skip = 10}) async {
     var response = await http.get(Uri.parse("$kHostIP/todos?limit=$limit&skip=$skip"), headers: headers);
     if (response.statusCode == 200) {
@@ -61,7 +55,6 @@ class RemoteServices {
     if (response.statusCode == 200) {
       return UserModel.fromJson(jsonDecode(response.body));
     }
-    print(response.body);
     if (await handleRefreshToken(response.statusCode)) {
       return fetchAuthUser();
     }
@@ -102,10 +95,8 @@ class RemoteServices {
       ),
       headers: headers,
     );
-    print(response.body);
     var res = jsonDecode(response.body);
     if (response.statusCode == 201) {
-      print("success");
       return TaskModel.fromJson(res);
     }
     return null;
@@ -121,10 +112,8 @@ class RemoteServices {
       ),
       headers: headers,
     );
-    print(response.body);
     var res = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      print("success");
       return TaskModel.fromJson(res);
     }
     return null;
@@ -136,7 +125,6 @@ class RemoteServices {
       headers: headers,
     );
     if (response.statusCode == 200) {
-      print("success");
       return true;
     }
     return false;
