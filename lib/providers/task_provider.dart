@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:maids.cc_test/constants.dart';
 import 'package:maids.cc_test/main.dart';
+import 'package:maids.cc_test/services/local_services.dart';
 import '../models/task_model.dart';
 import '../services/remote_services.dart';
 
@@ -43,18 +44,19 @@ class TaskProvider extends ChangeNotifier {
   Future<void> getTasks() async {
     if (page == 0) toggleLoading(true);
     try {
-      List<TaskModel>? result = await RemoteServices.fetchTasks(
+      List<TaskModel>? newTasks = await RemoteServices.fetchTasks(
         limit: limit,
         skip: limit * page,
       ).timeout(kTimeOutDuration1);
-      if (result == null) {
+      if (newTasks == null) {
         showDialog(
           context: navigatorKey.currentContext!,
           builder: (context) => kCheckConnectionDialog,
         );
       } else {
-        if (result.length < 10) hasMore = false;
-        tasks.addAll(result);
+        if (newTasks.length < 10) hasMore = false;
+        tasks.addAll(newTasks);
+        LocalServices.storeNewTasks(newTasks);
       }
     } on TimeoutException {
       showDialog(

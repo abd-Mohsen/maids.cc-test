@@ -77,7 +77,6 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                 ),
-                //todo: make light mode if there is time
                 ListTile(
                   leading: const Icon(
                     Icons.info_outline,
@@ -103,6 +102,16 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
+                ),
+                ListTile(
+                  leading: const Icon(
+                    Icons.save_alt,
+                  ),
+                  title: Text(
+                    "saved tasks",
+                    style: tt.titleLarge,
+                  ),
+                  onTap: () => navigatorKey.currentState!.pushNamed("/savedTasks"),
                 ),
                 ListTile(
                   leading: const Icon(
