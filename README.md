@@ -1,6 +1,6 @@
 # Maids.cc Test App
 
-[you can view a live demo from here](demo.mp4) 
+[you can view a live demo from here](demo.mp4)<br/>
 Welcome to the Maids.cc Test App! This Android mobile application is a demonstration project by Maids.cc, utilizing a fake API (dummyjson) to simulate interactions with a real server. The app functions as a task manager, allowing users to log in, authenticate, and manage tasks. This README provides a comprehensive guide to understanding, using, and exploring the app.
 
 ## Table of Contents
