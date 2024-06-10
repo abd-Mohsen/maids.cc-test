@@ -11,6 +11,7 @@ void main() {
   test("initial values are correct", () {
     expect(taskProvider.tasks, []);
     expect(taskProvider.isLoading, false);
+    expect(taskProvider.page, 0);
   });
 
   group("get tasks", () {
